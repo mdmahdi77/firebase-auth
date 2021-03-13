@@ -19,10 +19,11 @@ function App() {
     success: ''
   })
 
-  const provider = new firebase.auth.GoogleAuthProvider();
+  const googleProvider = new firebase.auth.GoogleAuthProvider();
+  const fbProvider = new firebase.auth.FacebookAuthProvider();
   const handleSignIn = () => {
     firebase.auth()
-      .signInWithPopup(provider)
+      .signInWithPopup(googleProvider)
       .then((result) => {
         const { displayName, email, photoURL } = result.user
         const signInUser = {
@@ -131,13 +132,43 @@ function App() {
       });
   }
 
+  const handleFbSign = () => {
+    firebase
+  .auth()
+  .signInWithPopup(fbProvider)
+  .then((result) => {
+    /** @type {firebase.auth.OAuthCredential} */
+    var credential = result.credential;
+
+    // The signed-in user info.
+    var user = result.user;
+
+    // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+    var accessToken = credential.accessToken;
+    console.log('fb user after sign in', user)
+
+    // ...
+  })
+  .catch((error) => {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // The email of the user's account used.
+    var email = error.email;
+    // The firebase.auth.AuthCredential type that was used.
+    var credential = error.credential;
+
+    // ...
+  });
+  }
+
   return (
     <div className="App">
       {
         user.isSignIn ? <button onClick={handleSignOut}>Sign Out</button> : <button onClick={handleSignIn}>Sign in</button>
       }
       <br/>
-      <button>LogIn using Facebook</button>
+      <button onClick={handleFbSign}> LogIn using Facebook</button>
       {
         user.isSignIn && <div>
           <p>Welcome, {user.name}</p>
